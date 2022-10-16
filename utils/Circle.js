@@ -46,10 +46,10 @@ class Circle {
     this.canvas.strokeEllipse(this.backgroundCircle)
 
     // Fill the circle with given percent
-    for (let index = 0; index < this.deg; index++) {
-      const rectX = this.center.x + this.canvasRadius * Circle.sinDeg(index) - this.canvasWidth / 2
-      const rectY = this.center.y - this.canvasRadius * Circle.cosDeg(index) - this.canvasWidth / 2
-      const rectR = new Rect(rectX, rectY, this.canvasWidth, this.canvasRadius)
+    for (let fill = 0; fill < this.deg; fill++) {
+      const rectX = this.center.x + this.canvasRadius * Circle.sinDeg(fill) - this.canvasWidth / 2
+      const rectY = this.center.y - this.canvasRadius * Circle.cosDeg(fill) - this.canvasWidth / 2
+      const rectR = new Rect(rectX, rectY, this.canvasWidth, this.canvasWidth)
       this.canvas.fillEllipse(rectR)
     }
 
@@ -153,4 +153,102 @@ module.exports = Circle
     "percent": 39.5,
     "color": Color.orange()
   }
+ */
+
+/**
+ *
+
+async function drawArc(
+  widget,
+  percent,
+  options = {}
+) {
+  console.log(percent)
+  console.log(options)
+  const canvSize = options.size || 200
+  const canvas = new DrawContext()
+  canvas.opaque = false
+  const canvWidth = options.lineWidth || 18 // circle thickness
+  const canvRadius = options.radius || 80 // circle radius
+  canvas.size = new Size(canvSize, canvSize)
+  canvas.respectScreenScale = true
+
+  const deg = Math.floor(percent * 3.6)
+
+  const ctr = new Point(canvSize / 2, canvSize / 2)
+  const bgx = ctr.x - canvRadius
+  const bgy = ctr.y - canvRadius
+  const bgd = 2 * canvRadius
+  const bgr = new Rect(bgx, bgy, bgd, bgd)
+
+  canvas.opaque = false
+
+  canvas.setFillColor(options.fillColor || Color.white())
+  canvas.setStrokeColor(options.strokeColor || new Color('#333333'))
+  canvas.setLineWidth(canvWidth)
+  canvas.strokeEllipse(bgr)
+
+  // Fill the circle with given percent
+  for (t = 0; t < deg; t++) {
+    const rect_x = ctr.x + canvRadius * sinDeg(t) - canvWidth / 2
+    const rect_y = ctr.y - canvRadius * cosDeg(t) - canvWidth / 2
+    const rect_r = new Rect(rect_x, rect_y, canvWidth, canvWidth)
+    canvas.fillEllipse(rect_r)
+  }
+
+  const drawCharacteristic = function (characteristic) {
+    const lowDeg = Math.floor(characteristic.percent * 3.6)
+
+    //     x = cx + r * cos(a)
+    //     y = cy + r * sin(a)
+    const p1_x = ctr.x + (canvRadius + canvWidth) * sinDeg(lowDeg)
+    const p1_y = ctr.y - (canvRadius + canvWidth) * cosDeg(lowDeg)
+    const p1 = new Point(p1_x, p1_y)
+    const path = new Path()
+    path.move(p1)
+
+    const p2_x = ctr.x + (canvRadius - canvWidth) * sinDeg(lowDeg)
+    const p2_y = ctr.y - (canvRadius - canvWidth) * cosDeg(lowDeg)
+    const p2 = new Point(p2_x, p2_y)
+    path.addLine(p2)
+
+    canvas.addPath(path)
+    canvas.setStrokeColor(characteristic.color || Color.orange())
+    canvas.setLineWidth(5)
+    canvas.strokePath()
+    if (characteristic.label) {
+      canvas.setTextColor(characteristic.color || Color.orange())
+      canvas.setFontSize(8)
+      canvas.drawText(characteristic.label, p2)
+    }
+  }
+
+  // draw line for low
+  if (options.low && options.low.percent) {
+    drawCharacteristic(options.low)
+  }
+
+  // draw line for high
+  if (options.high && options.high.percent) {
+    drawCharacteristic(options.high)
+  }
+
+  const stack = widget.addStack()
+  stack.size = (config.widgetFamily && config.widgetFamily.indexOf('accessory') > -1) ? new Size(60, 60) : new Size(140, 140)
+  stack.backgroundImage = canvas.getImage()
+  const padding = 0
+  stack.setPadding(padding, padding, padding, padding)
+  stack.centerAlignContent()
+
+  return stack
+}
+
+function sinDeg(deg) {
+  return Math.sin((deg * Math.PI) / 180)
+}
+
+function cosDeg(deg) {
+  return Math.cos((deg * Math.PI) / 180)
+}
+
  */
