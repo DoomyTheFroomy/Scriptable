@@ -26,16 +26,16 @@ class GasStorageData {
 
   async loadData () {
     const gasStorage = this
-    const date = new Date().toISOString().split('T')[0]
-    const url = gasStorage.basePath + '?country=' + gasStorage.countryCode + '&date=' + date
+    gasStorage.date = new Date().toISOString().split('T')[0]
+    const url = gasStorage.basePath + '?country=' + gasStorage.countryCode + '&date=' + gasStorage.date
 
     const res = await gasStorage._loadJSON(url)
     gasStorage.countryGasStorageLevel = res.data[0]
-    console.log(gasStorage.countryGasStorageLevel)
+    // console.log(gasStorage.countryGasStorageLevel)
 
     if (gasStorage.loadCompanyList) {
       await gasStorage._loadCompanyData()
-      console.log(gasStorage.companyList)
+      // console.log(gasStorage.companyList)
     }
     return this.countryGasStorageLevel
   }
@@ -44,21 +44,20 @@ class GasStorageData {
     const gasStorage = this
     const url = gasStorage.basePath + '/about'
     const res = await gasStorage._loadJSON(url)
-    console.log(res)
     gasStorage.companyList = []
     const companyList = (res.SSO ? res.SSO.Europe[gasStorage.countryName] : res.LSO.Europe[gasStorage.countryName])
 
-    console.log(companyList)
+    // console.log(companyList)
     if (!companyList) {
       return
     }
     for (let index = 0; index < companyList.length; index++) {
       const company = companyList[index]
-      const date = new Date().toISOString().split('T')[0]
+      const date = gasStorage.date
       const eic = company.eic
-      const url = gasStorage.basePath + '?country=' + gasStorage.countryCode + '&company=' + eic + '&date=' + date
-      const res = await gasStorage._loadJSON(url)
-      gasStorage.companyList.push({ ...res.data[0], ...company })
+      const companyUrl = gasStorage.basePath + '?country=' + gasStorage.countryCode + '&company=' + eic + '&date=' + date
+      const companyResponse = await gasStorage._loadJSON(companyUrl)
+      gasStorage.companyList.push({ ...companyResponse.data[0], ...company })
     }
     gasStorage.orderedCompanyList = gasStorage.companyList.filter(company => !isNaN(company.full)).sort(function (a, b) {
       const keyA = Number.parseFloat(a.full)
