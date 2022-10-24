@@ -72,10 +72,39 @@ class GasStorageData {
 
   async _loadJSON (url) {
     const gasStorage = this
+    const cachedFile = await gasStorage._loadCachedFiles (url)
+    if (cachedFile) {
+      return cachedFile
+    }
     const req = new Request(url)
     req.headers = { 'x-key': gasStorage.apiKey }
 
     return req.loadJSON()
+      .then(json => {
+        return gasStorage._saveResponse(url, json)
+      })
+  }
+  
+  async _loadCachedFiles (href) {
+    const files = FileManager.local()
+    const url = new Url(href)
+    const path = url.pathname + url.search
+    const cachePath = files.joinPath(files.cacheDirectory(), path, '.json')
+    const fileExists =  files.fileExists(cachePath)
+    if (fileExists) {
+      const file = files.readString(cachePath)
+      return JSON.parse(file)
+    }
+    return
+  }
+  
+  async _saveResponse (href, json) {
+    const files = FileManager.local()
+    const url = new Url(href)
+    const path = url.pathname + url.search
+    const cachePath = files.joinPath(files.cacheDirectory(), path, '.json')
+    files.writeString(cachePath, json)
+    return json
   }
 }
 module.exports = GasStorageData
