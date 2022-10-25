@@ -15,6 +15,7 @@ class GasStorageData {
    * @param {Boolean} [options.loadCompanyList=false] - Whether to load further information about the different companies for a country
    * @param {String} [options.countryName] - Country name for company list, e.g. `Germany`
    * @param {String} options.apiKey - API Key for the API, can be gained via {@link https://agsi.gie.eu/account | AGSIE Page}
+   * @param {Boolean} [options.useDocumentsDir=true] - Switch between apple cache and documents directory as cache directory
    */
   constructor (baseApi, countryCode, options) {
     this.basePath = baseApi
@@ -22,6 +23,7 @@ class GasStorageData {
     this.loadCompanyList = options.loadCompanyList || false
     this.countryName = options.countryName
     this.apiKey = options.apiKey
+    this.useDocumentsDir = options.useDocumentsDir || true
   }
 
   async loadData () {
@@ -87,9 +89,8 @@ class GasStorageData {
   
   async _loadCachedFiles (href) {
     const files = FileManager.local()
-    const url = new Url(href)
-    const path = url.pathname + url.search
-    const cachePath = files.joinPath(files.cacheDirectory(), path, '.json')
+    const gasStorage = this
+    const cachePath = gasStorage.getCachePath(href)
     const fileExists =  files.fileExists(cachePath)
     if (fileExists) {
       const file = files.readString(cachePath)
@@ -99,12 +100,21 @@ class GasStorageData {
   }
   
   async _saveResponse (href, json) {
+    const gasStorage = this
     const files = FileManager.local()
-    const url = new Url(href)
-    const path = url.pathname + url.search
-    const cachePath = files.joinPath(files.cacheDirectory(), path, '.json')
+    const cachePath = gasStorage.getCachePath(href)
     files.writeString(cachePath, json)
     return json
   }
-}
+  
+  function getCachePath (href) {
+    const gasStorage = this
+    const files = FileManager.local()
+    const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
+    const url = new Url(href)
+    const path = url.pathname + url.search
+    const cachePath = files.joinPath(dir, 'gasStorage' , path + '.json')
+    return cachePath
+  }
+} 
 module.exports = GasStorageData
