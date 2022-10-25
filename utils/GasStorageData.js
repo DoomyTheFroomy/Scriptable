@@ -113,7 +113,7 @@ class GasStorageData {
     const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
     const url = new Url(href)
     const path = url.pathname + url.search
-    const cachePath = files.joinPath(dir, 'gasStorage' , path + '.json')
+    const cachePath = files.joinPath(dir, 'gasStorage/' + path + '.json')
     return cachePath
   }
 } 
