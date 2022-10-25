@@ -24,7 +24,7 @@ class GasStorageData {
     this.countryName = options.countryName
     this.apiKey = options.apiKey
     this.useDocumentsDir = options.useDocumentsDir || true
-    this.createCacheDir()
+    this._createCacheDir()
   }
 
   async loadData () {
@@ -75,7 +75,7 @@ class GasStorageData {
 
   async _loadJSON (url) {
     const gasStorage = this
-    const cachedFile = await gasStorage._loadCachedFiles (url)
+    const cachedFile = await gasStorage._loadCachedFile(url)
     if (cachedFile) {
       return cachedFile
     }
@@ -88,10 +88,10 @@ class GasStorageData {
       })
   }
   
-  async _loadCachedFiles (href) {
+  async _loadCachedFile (href) {
     const files = FileManager.local()
     const gasStorage = this
-    const cachePath = gasStorage.getCachePath(href)
+    const cachePath = gasStorage._getCachePath(href)
     const fileExists =  files.fileExists(cachePath)
     if (fileExists) {
       const file = files.readString(cachePath)
@@ -103,13 +103,13 @@ class GasStorageData {
   async _saveResponse (href, json) {
     const gasStorage = this
     const files = FileManager.local()
-    const cachePath = gasStorage.getCachePath(href)
+    const cachePath = gasStorage._getCachePath(href)
     console.log(cachePath)
     files.writeString(cachePath, JSON.stringify(json))
     return json
   }
   
-  getCachePath (href) {
+  _getCachePath (href) {
     const gasStorage = this
     const files = FileManager.local()
     const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
@@ -119,7 +119,7 @@ class GasStorageData {
     return cachePath
   }
   
-  createCacheDir () {
+  _createCacheDir () {
     const gasStorage = this
     const files = FileManager.local()
     const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
