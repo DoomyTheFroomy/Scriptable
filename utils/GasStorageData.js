@@ -24,6 +24,7 @@ class GasStorageData {
     this.countryName = options.countryName
     this.apiKey = options.apiKey
     this.useDocumentsDir = options.useDocumentsDir || true
+    this.createCacheDir()
   }
 
   async loadData () {
@@ -103,7 +104,8 @@ class GasStorageData {
     const gasStorage = this
     const files = FileManager.local()
     const cachePath = gasStorage.getCachePath(href)
-    files.writeString(cachePath, json)
+    console.log(cachePath)
+    files.writeString(cachePath, JSON.stringify(json))
     return json
   }
   
@@ -111,10 +113,19 @@ class GasStorageData {
     const gasStorage = this
     const files = FileManager.local()
     const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
-    const url = new URL(href)
-    const path = url.pathname + url.search
+   // const url = new URL(href)
+    const path = href.replace(gasStorage.basePath, '').replace('?', '').replace('&', '')
     const cachePath = files.joinPath(dir, 'gasStorage/' + path + '.json')
     return cachePath
   }
+  
+  createCacheDir () {
+    const gasStorage = this
+    const files = FileManager.local()
+    const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
+    const dirPath = files.joinPath(dir, 'gasStorage')
+    files.createDirectory(dirPath, true)
+  }
 } 
+
 module.exports = GasStorageData
