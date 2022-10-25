@@ -111,7 +111,7 @@ class GasStorageData {
     const gasStorage = this
     const files = FileManager.local()
     const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
-    const url = new Url(href)
+    const url = new URL(href)
     const path = url.pathname + url.search
     const cachePath = files.joinPath(dir, 'gasStorage/' + path + '.json')
     return cachePath
