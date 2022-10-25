@@ -107,7 +107,7 @@ class GasStorageData {
     return json
   }
   
-  function getCachePath (href) {
+  getCachePath (href) {
     const gasStorage = this
     const files = FileManager.local()
     const dir = (gasStorage.useDocumentsDir ? files.documentsDirectory() : files.cacheDirectory())
