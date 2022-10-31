@@ -11,3 +11,7 @@ All my Scriptable Widget in one place
 
 [Widget for Country gas storage level](GasStorage/README.md)
 
+## Radio Teddy Live (🇩🇪)
+
+[Widget zur Anzeige des aktuellen Titels bzw. der aktuellen Sendung](RadioTeddyLive/README.md)
+
