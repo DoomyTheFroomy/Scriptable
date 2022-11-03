@@ -15,3 +15,7 @@ All my Scriptable Widget in one place
 
 [Widget zur Anzeige des aktuellen Titels bzw. der aktuellen Sendung](RadioTeddyLive/README.md)
 
+## Pollenflug Gefahrenindex (🇩🇪)
+
+[Der Pollenflug-Gefahrenindex vom Deutschen Wetterdienst als Scriptable Widget](PollenAlarm/README.md)
+
