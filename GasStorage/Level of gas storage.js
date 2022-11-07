@@ -118,7 +118,7 @@ async function createAccessoryRectangularWidget (widget) {
 
   widget.addText('💿: ' + gasStorageData.countryGasStorageLevel.full + '%')
   widget.addText('🔥: ' + gasStorageData.countryGasStorageLevel.consumptionFull + '%')
-  widget.addAccessoryWidgetBackground()
+  //widget.addAccessoryWidgetBackground()
 }
 
 async function createMediumWidget (widget) {
