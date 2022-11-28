@@ -75,9 +75,13 @@ class GasStorageData {
 
   async _loadJSON (url) {
     const gasStorage = this
-    const cachedFile = await gasStorage._loadCachedFile(url)
-    if (cachedFile) {
-      return cachedFile
+    try {
+      const cachedFile = await gasStorage._loadCachedFile(url)
+      if (cachedFile) {
+        return cachedFile
+      }
+    } catch (e) {
+      console.log(e)
     }
     const req = new Request(url)
     req.headers = { 'x-key': gasStorage.apiKey }
