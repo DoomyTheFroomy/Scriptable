@@ -19,3 +19,6 @@ All my Scriptable Widget in one place
 
 [Der Pollenflug-Gefahrenindex vom Deutschen Wetterdienst als Scriptable Widget](PollenAlarm/README.md)
 
+## NINA - Warnmeldungen (🇩🇪)
+
+[NINA - Warnmeldungen vom Bundesamt für Bevölkerungsschutz und Katastrophenhilfe (BBK) als Scriptable Widget](NINA/README.md)
