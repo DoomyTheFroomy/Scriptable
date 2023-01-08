@@ -22,3 +22,7 @@ All my Scriptable Widget in one place
 ## NINA - Warnmeldungen (🇩🇪)
 
 [NINA - Warnmeldungen vom Bundesamt für Bevölkerungsschutz und Katastrophenhilfe (BBK) als Scriptable Widget](NINA/README.md)
+
+## Lebensmittel- & Produktwarnungen (🇩🇪)
+
+[Lebensmittelwarnungen vom Bundesamt für Verbraucherschutz und Lebensmittelsicherheit (BVL) und Produktwarnungen von der Bundesanstalt für Arbeitsschutz und Arbeitsmedizin (BAuA) als Scriptable Widget](LmP/README.md)

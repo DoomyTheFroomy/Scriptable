@@ -52,6 +52,8 @@ Das mittelgroße Widget kommt komplett ohne jegliche Konfiguration aus und zeigt
 
 ## Hinweise
 
+Die einzelnen Meldungen können für mehr Informationen angeklickt werden. Dabei wird man auf die entsprechende Webseite weitergeleitet.
+
 ### Status (farbliche Markierung)
 
 Der Status der Warnmeldungen wird farblich markiert:
