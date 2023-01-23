@@ -80,8 +80,8 @@ async function createSmallWidget(widget) {
 }
 
 async function createMediumWidget (widget) {
-  createHeadline(widget)
-  widget.addSpacer()
+//   createHeadline(widget)
+//   widget.addSpacer()
   const docs = await getReports()
   const msStack = widget.addStack()
   msStack.layoutHorizontally()
@@ -91,18 +91,21 @@ async function createMediumWidget (widget) {
     console.log(warning)
     const msgStack = msStack.addStack()
     msgStack.centerAlignContent()
+    msgStack.cornerRadius = 5
 //     msgStack.setPadding(5,5,5,5)
     msgStack.useDefaultPadding()
-    msgStack.size = new Size(100, 120)
+    msgStack.size = new Size(100, 140)
     msgStack.layoutVertically()
     await createProductImage(warning, msgStack)
   // msgStack.addText('⚠️')
   // imgStack.applyFittingContentMode()
-   
-//     msgStack.addSpacer(5)
-    createMessage(warning, msgStack)
+   msgStack.addSpacer(5)
+   createMessage(warning, msgStack)
+//    
+//     createMessage(warning, msgStack)
     msgStack.addSpacer()
     createImg(warning, msgStack)
+    
     if(index < 2) {
       msStack.addSpacer()
     }
@@ -158,12 +161,18 @@ function createMessage (report, widget) {
   const title = report.title
  
   const message = widget.addText(title)
-  message.textColor = Color.red()
-  message.font = Font.mediumRoundedSystemFont(12)
+//   widget.backgroundColor = Color.white()
+  message.font = Font.boldSystemFont(12)
+  message.textColor = Color.black()
+  message.shadowColor = Color.white()
+  message.shadowOffset = new Point(1,1)
+  message.shadowRadius = 2
+  
   message.minimumScaleFactor = 0.5
   message.centerAlignText()
   message.url = report.link
-  message.backgroundColor = Color.black()
+//   message.backgroundColor = Color.black()
+//   message.textOpacity = 0.5
 //   createMessageUrl(report)
   // widget.addSpacer()
 // msgStack.addSpacer()
@@ -189,6 +198,7 @@ function createImgStack (img, widget) {
   imgStack.resizable = true
   imgStack.centerAlignImage()
   imgStack.rightAlignImage()
+//   imgStack.imageOpacity = 0.5
 }
 
 async function createProductImage (warning, widget) {
