@@ -5,7 +5,7 @@
 
 let url = 'https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations.json?radius=30&includeCurrentMeasurement=true&includeTimeseries=true&includeCharacteristicValues=true'
 
-let testId //= '570620'
+let testId// = '570620'
 
 if (args.widgetParameter || testId) {
   const ids = args.widgetParameter || testId
@@ -40,6 +40,15 @@ const res = await reqStations.loadJSON()
 // console.log(res)
 
 const closestStation = res[0]
+
+if (!closestStation) {
+  const widget = new ListWidget()
+  widget.addText('Keine Station gefunden!').font = Font.headline()
+  widget.addText('Eventuell wurde eine falsche Stations-ID angegeben, oder in Ihrer Nähe befindet sich keine Station').font = Font.body()
+  Script.setWidget(widget)
+  Script.complete()
+  return
+}
 
 const csTimeseries = closestStation.timeseries[0]
 const csCurrentMeasurement = csTimeseries.currentMeasurement
@@ -118,6 +127,9 @@ const currentPercent = Math.floor(currentLevel * 100 / max)
 console.log(currentPercent)
 
 const widget = await createWidget()
+if (config.runsInAccessoryWidget && !config.runsInWidget) {
+//   widget.addAccessoryWidgetBackground()
+}
 widget.url = 'www.pegelonline.wsv.de'
 
 if (!config.runsInWidget) {
@@ -133,13 +145,16 @@ async function createWidget () {
     widget.setPadding(10, 10, 10, 10)
   }
 
-  if (config.widgetFamily === 'small' ||
-    config.widgetFamily === 'accessoryCircular') {
+  if ( config.widgetFamily === 'small') {
     widget = await createSmallWidget(widget)
   }
+    
+    
+    if (config.widgetFamily === 'accessoryCircular') {
+    widget = await createCircularWidget(widget)
+  }
 
-  if (!config.widgetFamily ||
-    config.widgetFamily === 'medium' ||
+  if (!config.widgetFamily || config.widgetFamily === 'medium' ||
     config.widgetFamily === 'accessoryRectangular') {
     widget = await createMediumWidget(widget)
   }
@@ -148,7 +163,7 @@ async function createWidget () {
     widget = await createMediumWidget(widget)
   }
 
-  if (config.widgetFamily !== 'accessoryCircular' || config.widgetFamily === 'small') {
+  if (config.widgetFamily !== 'accessoryCircular') {
     const srcText = widget.addText('Quelle: www.pegelonline.wsv.de')
     srcText.font = Font.ultraLightSystemFont(8)
     srcText.rightAlignText()
@@ -163,6 +178,7 @@ async function createMediumWidget (widget) {
 
   if (config.widgetFamily !== 'accessoryRectangular') {
     const circleStack = stack.addStack()
+    circleStack.layoutVertically()
     await createSmallWidget(circleStack)
   }
 
@@ -182,7 +198,9 @@ async function createMediumWidget (widget) {
 
     const text = valueStack.addText(name)
     setTextOptions(text, measurement)
-    const value = valueStack.addText(level + unit + ' (' + trend[measurement.trend] + ')')
+    log(measurement)
+    const trendIco = trend[measurement.trend] || trend['-999']
+    const value = valueStack.addText(level + unit + ' (' + trendIco + ')')
     setTextOptions(value, measurement)
   }
   valueStack.centerAlignContent()
@@ -191,14 +209,48 @@ async function createMediumWidget (widget) {
 }
 
 async function createSmallWidget (widget) {
+//   widget.layoutVertically()
   const Circle = await getService(
     'Circle',
     'https://raw.githubusercontent.com/DoomyTheFroomy/Scriptable/main/utils/Circle.js',
     true
   )
-  const stackSize = (config.widgetFamily && config.widgetFamily.indexOf('accessory') > -1) ? new Size(60, 60) : new Size(140, 140)
+  const name = widget.addText(closestStation.longname)
+  name.font = Font.mediumRoundedSystemFont(8)
+  name.centerAlignText()
+  const stackSize =  new Size(135, 135)
   const circle = new Circle(currentPercent, {
-    fillColor: new Color('#005EB8'),
+    fillColor: new Color('#005EB8', 1),
+    strokeColor: new Color('#333333', 0.4),
+    characteristics: [
+      lowPercent,
+      highPercent
+    ]
+  })
+  const circleStack = circle.draw(widget, {
+    size: stackSize,
+    padding: 0
+  })
+  
+  const text = circleStack.addText(currentLevel + csTimeseries.unit)
+  text.textColor = getTextColorByState(csCurrentMeasurement)
+
+
+  return widget
+}
+
+async function createCircularWidget (widget) {
+//   widget.layoutVertically()
+  const Circle = await getService(
+    'Circle',
+    'https://raw.githubusercontent.com/DoomyTheFroomy/Scriptable/main/utils/Circle.js',
+    true
+  )
+  
+  const stackSize = new Size(60, 60)
+  const circle = new Circle(currentPercent, {
+    fillColor: new Color('#333333', 1),
+    strokeColor: new Color('#333333', 0.4),
     characteristics: [
       lowPercent,
       highPercent
@@ -218,9 +270,7 @@ async function createSmallWidget (widget) {
   const text = circleStack.addText(currentLevel + csTimeseries.unit)
   text.textColor = getTextColorByState(csCurrentMeasurement)
 
-  if (config.widgetFamily === 'accessoryCircular') {
-    text.font = Font.lightRoundedSystemFont(10)
-  }
+  text.font = Font.lightRoundedSystemFont(10)
   return widget
 }
 
